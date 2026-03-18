@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Work Place Stress Assessment</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+ 
+    :root {
+      --brand:       #486fdb;
+      --brand-dark:  #3558c0;
+      --brand-light: #e8eefb;
+      --bg:          #f0f0f0;
+      --surface:     #ffffff;
+      --text:        #000000;
+      --text-muted:  #555555;
+      --border:      #d4d4d4;
+      --success:     #2e7d32;
+      --mid:         #e6820e;
+      --high:        #c62828;
+      --radius:      12px;
+      --shadow:      0 4px 24px rgba(72,111,219,0.10);
+    }
+ 
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 16px 48px;
+    }
+ 
+    /* ── Outer wrapper ── */
+    .wrap {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+ 
+    /* ── Header ── */
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+ 
+    .header-badge {
+      display: inline-block;
+      background: var(--brand-light);
+      color: var(--brand);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 16px;
+    }
+ 
+    .header h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(26px, 6vw, 40px);
+      color: var(--brand);
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+ 
+    .header p {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+ 
+    /* ── Progress bar ── */
+    .progress-wrap {
+      background: var(--border);
+      border-radius: 100px;
+      height: 6px;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+ 
+    .progress-bar {
+      height: 100%;
+      background: var(--brand);
+      border-radius: 100px;
+      transition: width 0.4s cubic-bezier(.4,0,.2,1);
+      width: 0%;
+    }
+ 
+    .progress-label {
+      text-align: right;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+ 
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 32px 28px;
+      margin-bottom: 20px;
+    }
+ 
+    /* ── Section titles ── */
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--brand);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+ 
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--brand-light);
+    }
+ 
+    /* ── Form fields ── */
+    .field {
+      margin-bottom: 18px;
+    }
+ 
+    .field label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+ 
+    .field label .req {
+      color: var(--brand);
+      margin-left: 2px;
+    }
+ 
+    .field input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      color: var(--text);
+      background: #fafafa;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+    }
+ 
+    .field input:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(72,111,219,0.12);
+      background: #fff;
+    }
+ 
+    .field input.error {
+      border-color: #e53935;
+    }
+ 
+    .field-error {
+      color: #e53935;
+      font-size: 12px;
+      margin-top: 4px;
+      display: none;
+    }
+ 
+    .field-error.visible {
+      display: block;
+    }
+ 
+    /* ── Question cards ── */
+    .question-card {
+      display: none;
+      animation: fadeSlide 0.35s ease forwards;
+    }
+ 
+    .question-card.active {
+      display: block;
+    }
+ 
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+ 
+    .question-number {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--brand);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 10px;
+    }
+ 
+    .question-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(17px, 4vw, 21px);
+      line-height: 1.4;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+ 
+    /* ── Yes/No radio buttons ── */
+    .yn-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+ 
+    .yn-option {
+      position: relative;
+    }
+ 
+    .yn-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+ 
+    .yn-option label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 20px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: #fafafa;
+      transition: all 0.2s;
+      user-select: none;
+    }
+ 
+    .yn-option label:hover {
+      border-color: var(--brand);
+      color: var(--brand);
+      background: var(--brand-light);
+    }
+ 
+    .yn-option input[type="radio"]:checked + label {
+      border-color: var(--brand);
+      background: var(--brand);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(72,111,219,0.3);
+    }
+ 
+    .yn-icon {
+      font-size: 18px;
+    }
+ 
+    /* ── Navigation buttons ── */
+    .nav-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 28px;
+      gap: 12px;
+    }
+ 
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 26px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      -webkit-appearance: none;
+    }
+ 
+    .btn-primary {
+      background: var(--brand);
+      color: #fff;
+    }
+ 
+    .btn-primary:hover {
+      background: var(--brand-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(72,111,219,0.35);
+    }
+ 
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+ 
+    .btn-ghost {
+      background: transparent;
+      color: var(--brand);
+      border: 2px solid var(--border);
+    }
+ 
+    .btn-ghost:hover {
+      border-color: var(--brand);
+      background: var(--brand-light);
+    }
+ 
+    .btn-full {
+      width: 100%;
+    }
+ 
+    /* ── Answer required warning ── */
+    .answer-warning {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      background: #fff3e0;
+      border: 1px solid #f9a825;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: #b45309;
+      font-weight: 500;
+      margin-top: 12px;
+    }
+ 
+    .answer-warning.visible {
+      display: flex;
+    }
+ 
+    /* ── Results screen ── */
+    #results-screen {
+      display: none;
+    }
+ 
+    #results-screen.visible {
+      display: block;
+    }
+ 
+    .result-header {
+      text-align: center;
+      padding: 36px 28px 28px;
+    }
+ 
+    .result-icon {
+      font-size: 56px;
+      margin-bottom: 16px;
+      display: block;
+      line-height: 1;
+    }
+ 
+    .result-name-greeting {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+ 
+    .result-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(22px, 5vw, 32px);
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+ 
+    .result-badge {
+      display: inline-block;
+      padding: 6px 18px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+ 
+    .badge-high  { background: #fce8e8; color: var(--high); }
+    .badge-mid   { background: #fff3e0; color: var(--mid);  }
+    .badge-low   { background: #e8f5e9; color: var(--success); }
+ 
+    .result-category {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(20px, 4.5vw, 28px);
+      margin: 16px 0 10px;
+      line-height: 1.3;
+    }
+ 
+    .result-description {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text-muted);
+      max-width: 480px;
+      margin: 0 auto 28px;
+    }
+ 
+    .score-display {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 28px;
+    }
+ 
+    .score-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background 0.3s;
+    }
+ 
+    .score-dot.filled-high  { background: var(--high); }
+    .score-dot.filled-mid   { background: var(--mid);  }
+    .score-dot.filled-low   { background: var(--brand);}
+ 
+    .result-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0;
+    }
+ 
+    .result-cta {
+      padding: 28px 28px 32px;
+      text-align: center;
+    }
+ 
+    .result-cta p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+    }
+ 
+    .btn-cta {
+      background: var(--brand);
+      color: #fff;
+      padding: 16px 36px;
+      font-size: 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+ 
+    .btn-cta:hover {
+      background: var(--brand-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(72,111,219,0.35);
+    }
+ 
+    .restart-link {
+      display: block;
+      text-align: center;
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+ 
+    .restart-link:hover {
+      color: var(--brand);
+    }
+ 
+    /* ── Intro screen ── */
+    #intro-screen { display: block; }
+    #assessment-screen { display: none; }
+ 
+    .intro-info {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+ 
+    .info-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+ 
+    .info-chip span {
+      font-size: 16px;
+    }
+ 
+    /* ── Responsive ── */
+    @media (max-width: 480px) {
+      .card {
+        padding: 24px 18px;
+      }
+ 
+      .yn-group {
+        grid-template-columns: 1fr 1fr;
+      }
+ 
+      .nav-row {
+        flex-direction: column-reverse;
+      }
+ 
+      .nav-row .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+ 
+<div class="wrap">
+ 
+  <!-- ══════════════ HEADER ══════════════ -->
+  <div class="header">
+    <div class="header-badge">Jason Sandler Speaks</div>
+    <h1>Work Place Stress Assessment</h1>
+    <p>A brief, confidential assessment to help you evaluate the current levels of stress in your workplace — and understand what to do next.</p>
+  </div>
+ 
+  <!-- ══════════════ INTRO SCREEN ══════════════ -->
+  <div id="intro-screen">
+    <div class="card">
+      <div class="section-title">Your Details</div>
+ 
+      <div class="field">
+        <label for="name">Full Name <span class="req">*</span></label>
+        <input type="text" id="name" placeholder="e.g. Jane Smith" autocomplete="name" />
+        <div class="field-error" id="name-error">Please enter your name.</div>
+      </div>
+ 
+      <div class="field">
+        <label for="cell">Cell Phone <span class="req">*</span></label>
+        <input type="tel" id="cell" placeholder="e.g. 082 123 4567" autocomplete="tel" />
+        <div class="field-error" id="cell-error">Please enter a valid cell phone number.</div>
+      </div>
+ 
+      <div class="field">
+        <label for="company">Company / Organisation</label>
+        <input type="text" id="company" placeholder="e.g. Acme Corp" autocomplete="organization" />
+      </div>
+ 
+      <div style="margin-top:8px;">
+        <div class="intro-info">
+          <div class="info-chip"><span>📋</span> 10 questions</div>
+          <div class="info-chip"><span>⏱️</span> Under 3 minutes</div>
+          <div class="info-chip"><span>🔒</span> Confidential</div>
+        </div>
+ 
+        <button class="btn btn-primary btn-full" onclick="startAssessment()">
+          Begin Assessment &nbsp;→
+        </button>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- ══════════════ ASSESSMENT SCREEN ══════════════ -->
+  <div id="assessment-screen">
+ 
+    <div class="progress-label" id="progress-label">Question 1 of 10</div>
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+ 
+    <div class="card">
+ 
+      <!-- Question 1 -->
+      <div class="question-card active" id="q1">
+        <div class="question-number">Question 1 of 10</div>
+        <div class="question-text">Do you or your colleagues feel that you are functioning close to burnout?</div>
+        <div class="yn-group">
+          <div class="yn-option">
+            <input type="radio" name="q1" id="q1-yes" value="yes" />
+            <label for="q1-yes"><span class="yn-icon">✓</span> Yes</label>
+          </div>
+          <div class="yn-option">
+            <input type="radio" name="q1" id="q1-no" value="no" />
+            <label for="q1-no"><span class="yn-icon">✗</span> No</label>
+          </div>
+        </div>
+        <div class="answer-warning" id="warn-q1">⚠️ Please select an answer to continue.</div>
+      </div>
+ 
+      <!-- Question 2 -->
+      <div class="question-card" id="q2">
+        <div class="question-number">Question 2 of 10</div>
+        <div class="question-text">Have you or any colleagues considered making major changes — such as leaving your job — because of work-related stress?</div>
+        <div class="yn-group">
+          <div class="yn-option">
+            <input type="radio" name="q2" id="q2-yes" value="yes" />
+            <label for="q2-yes"><span class="yn-icon">✓</span> Yes</label>
+          </div>
+          <div class="yn-option">
+            <input type="radio" name="q2" id="q2-no" value="no" />
+            <label for="q2-no"><span class="yn-icon">✗</span> No</label>
+          </div>
+        </div>
+        <div class="answer-warning" id="warn-q2">⚠️ Please select an answer to continue.</div>
+      </div>
+ 
+      <!-- Question 3 -->
+      <div class="question-card" id="q3">
+        <div class="question-number">Question 3 of 10</div>
+        <div class="question-text">When workloads are at their highest, do you notice an increase in employees calling in sick?</div>
+        <div class="yn-group">
+          <div class="yn-option">
+            <input type="radio" name="q3" id="q3-yes" value="yes" />
+            <label for="q3-yes"><span class="yn-icon">✓</span> Yes</label>
+          </div>
+          <div class="yn-option">
+            <input type="radio" name="q3" id="q3-no" value="no" />
+            <label for="q3-no"><span class="yn-icon">✗</span> No</label>
+          </div>
+        </div>
+        <div class="answer-warning" id="warn-q3">⚠️ Please select an answer to continue.</div>
+      </div>
+ 
+      <!-- Question 4 -->
+      <div class="question-card" id="q4">
+        <div class="question-number">Question 4 of 10</div>
+        <div class="question-text">Would you describe the energy and enthusiasm levels among staff in your workplace as generally low?</div>
+        <div class="yn-group">
+          <div class="yn-option">
+            <input type="radio" name="q4" id="q4-yes" value="yes" />
+            <label for="q4-yes"><span class="yn-icon">✓</span> Yes</label>
+          </div>
+          <div class="yn-option">
+            <input type="radio" name="q4" id="q4-no" value="no" />
+            <label for="q4-no"><span class="yn-icon">✗</span> No</label>
+          </div>
+        </div>
+        <div class="answer-warning" id="warn-q4">⚠️ Please select an answer to continue.</div>
+      </div>
+ 
+      <!-- Question 5 -->
+      <div class="question-card" id="q5">
+        <div class="question-number">Question 5 of 10</div>
+        <div class="question-text">Do staff members feel afraid or uncomfortable admitting that they are struggling with stress at work?</div>
+        <div class="yn-group">
+          <div class="yn-option">
+            <input type="radio" name="q5" id="q5-yes" value="yes" />
+            <label for="q5-yes"><span class="yn-icon">✓</span> Yes</label>
+          </div>
+          <div class="yn-option">
+            <input type="radio" name="q5" id="q5-no" value="no" />
+            <label for="q5-no"><span class="yn-icon">✗</span> No</label>
+          </div>
+        </div>
+        <div class="answer-warning" id="warn-q5">⚠️ Please select an answer to continue.</div>
+      </div>
+ 
+      <!-- Question 6 -->
+      <div class="question-card" id="q6">
+        <div class="question-number">Question 6 of 10</div>
+        <div class="question-text">Has your organisation experienced notable productivity or profit losses due to stress-related absenteeism?</div>
+        <div class="yn-group">
+          <div class="yn-option">
+            <input type="radio" name="q6" id="q6-yes" value="yes" />
+            <label for="q6-yes"><span class="yn-icon">✓</span> Yes</label>
+          </div>
+          <div class="yn-option">
+            <input type="radio" name="q6" id="q6-no" value="no" />
+            <label for="q6-no"><span class="yn-icon">✗</span> No</label>
+          </div>
+        </div>
+        <div class="answer-warning" id="warn-q6">⚠️ Please select an answer to continue.</div>
+      </div>
+ 
+      <!-- Question 7 -->
+      <div class="question-card" id="q7">
+        <div class="question-number">Question 7 of 10</div>
+        <div class="question-text">Do you believe that current stress levels are negatively affecting the quality of service your customers or clients receive?</div>
+        <div class="yn-group">
+          <div class="yn-option">
+            <input type="radio" name="q7" id="q7-yes" value="yes" />
+            <label for="q7-yes"><span class="yn-icon">✓</span> Yes</label>
+          </div>
+          <div class="yn-option">
+            <input type="radio" name="q7" id="q7-no" value="no" />
+            <label for="q7-no"><span class="yn-icon">✗</span> No</label>
+          </div>
+        </div>
+        <div class="answer-warning" id="warn-q7">⚠️ Please select an answer to continue.</div>
+      </div>
+ 
+      <!-- Question 8 -->
+      <div class="question-card" id="q8">
+        <div class="question-number">Question 8 of 10</div>
+        <div class="question-text">Are conflicts, tensions, or interpersonal friction between colleagues becoming more frequent in your workplace?</div>
+        <div class="yn-group">
+          <div class="yn-option">
+            <input type="radio" name="q8" id="q8-yes" value="yes" />
+            <label for="q8-yes"><span class="yn-icon">✓</span> Yes</label>
+          </div>
+          <div class="yn-option">
+            <input type="radio" name="q8" id="q8-no" value="no" />
+            <label for="q8-no"><span class="yn-icon">✗</span> No</label>
+          </div>
+        </div>
+        <div class="answer-warning" id="warn-q8">⚠️ Please select an answer to continue.</div>
+      </div>
+ 
+      <!-- Question 9 -->
+      <div class="question-card" id="q9">
+        <div class="question-number">Question 9 of 10</div>
+        <div class="question-text">Do you find it difficult to mentally "switch off" from work stress during your personal time?</div>
+        <div class="yn-group">
+          <div class="yn-option">
+            <input type="radio" name="q9" id="q9-yes" value="yes" />
+            <label for="q9-yes"><span class="yn-icon">✓</span> Yes</label>
+          </div>
+          <div class="yn-option">
+            <input type="radio" name="q9" id="q9-no" value="no" />
+            <label for="q9-no"><span class="yn-icon">✗</span> No</label>
+          </div>
+        </div>
+        <div class="answer-warning" id="warn-q9">⚠️ Please select an answer to continue.</div>
+      </div>
+ 
+      <!-- Question 10 -->
+      <div class="question-card" id="q10">
+        <div class="question-number">Question 10 of 10</div>
+        <div class="question-text">Do you feel that the current levels of stress in your workplace are unsustainable and need to be urgently addressed?</div>
+        <div class="yn-group">
+          <div class="yn-option">
+            <input type="radio" name="q10" id="q10-yes" value="yes" />
+            <label for="q10-yes"><span class="yn-icon">✓</span> Yes</label>
+          </div>
+          <div class="yn-option">
+            <input type="radio" name="q10" id="q10-no" value="no" />
+            <label for="q10-no"><span class="yn-icon">✗</span> No</label>
+          </div>
+        </div>
+        <div class="answer-warning" id="warn-q10">⚠️ Please select an answer to continue.</div>
+      </div>
+ 
+      <!-- Navigation -->
+      <div class="nav-row">
+        <button class="btn btn-ghost" id="prev-btn" onclick="prevQuestion()" style="display:none;">← Back</button>
+        <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()">Next →</button>
+        <button class="btn btn-primary" id="submit-btn" onclick="submitAssessment()" style="display:none;">See My Results →</button>
+      </div>
+ 
+    </div><!-- /.card -->
+  </div><!-- /#assessment-screen -->
+ 
+  <!-- ══════════════ RESULTS SCREEN ══════════════ -->
+  <div id="results-screen">
+    <div class="card" style="padding:0; overflow:hidden;">
+ 
+      <div class="result-header">
+        <span class="result-icon" id="result-icon">📊</span>
+        <div class="result-name-greeting">Assessment complete for</div>
+        <div class="result-name" id="result-name">Your Name</div>
+        <div class="result-badge" id="result-badge">Result</div>
+        <div class="score-display" id="score-dots"></div>
+        <div class="result-category" id="result-category"></div>
+        <div class="result-description" id="result-description"></div>
+      </div>
+ 
+      <hr class="result-divider" />
+ 
+      <div class="result-cta">
+        <p id="result-cta-intro">Take the next step and reach out to Jason Sandler today.</p>
+        <a href="https://jasonsandlerspeaks.com/Contact-Jason-Sandler.html" target="_blank" class="btn-cta" id="result-cta-btn">
+          Contact Jason Sandler &nbsp;→
+        </a>
+      </div>
+ 
+    </div>
+ 
+    <span class="restart-link" onclick="restartAssessment()">↺ Restart assessment</span>
+  </div>
+ 
+</div><!-- /.wrap -->
+ 
+<script>
+  // ── State ──
+  var currentQ = 1;
+  var totalQ   = 10;
+  var answers  = {};
+ 
+  // ── Start assessment ──
+  function startAssessment() {
+    var name = document.getElementById('name').value.trim();
+    var cell = document.getElementById('cell').value.trim();
+    var valid = true;
+ 
+    // Validate name
+    if (!name) {
+      document.getElementById('name').classList.add('error');
+      document.getElementById('name-error').classList.add('visible');
+      valid = false;
+    } else {
+      document.getElementById('name').classList.remove('error');
+      document.getElementById('name-error').classList.remove('visible');
+    }
+ 
+    // Validate cell
+    var cellClean = cell.replace(/[\s\-\(\)]/g, '');
+    if (!cell || cellClean.length < 7) {
+      document.getElementById('cell').classList.add('error');
+      document.getElementById('cell-error').classList.add('visible');
+      valid = false;
+    } else {
+      document.getElementById('cell').classList.remove('error');
+      document.getElementById('cell-error').classList.remove('visible');
+    }
+ 
+    if (!valid) return;
+ 
+    document.getElementById('intro-screen').style.display = 'none';
+    document.getElementById('assessment-screen').style.display = 'block';
+    updateProgress();
+  }
+ 
+  // ── Update progress ──
+  function updateProgress() {
+    var pct = ((currentQ - 1) / totalQ) * 100;
+    document.getElementById('progress-bar').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = 'Question ' + currentQ + ' of ' + totalQ;
+ 
+    // Nav buttons
+    var prevBtn   = document.getElementById('prev-btn');
+    var nextBtn   = document.getElementById('next-btn');
+    var submitBtn = document.getElementById('submit-btn');
+ 
+    prevBtn.style.display   = currentQ > 1 ? 'inline-flex' : 'none';
+    nextBtn.style.display   = currentQ < totalQ ? 'inline-flex' : 'none';
+    submitBtn.style.display = currentQ === totalQ ? 'inline-flex' : 'none';
+  }
+ 
+  // ── Show question ──
+  function showQuestion(n) {
+    for (var i = 1; i <= totalQ; i++) {
+      var el = document.getElementById('q' + i);
+      el.classList.remove('active');
+      document.getElementById('warn-q' + i).classList.remove('visible');
+    }
+    document.getElementById('q' + n).classList.add('active');
+    updateProgress();
+ 
+    // Restore saved answer if any
+    if (answers['q' + n]) {
+      var radio = document.querySelector('input[name="q' + n + '"][value="' + answers['q' + n] + '"]');
+      if (radio) radio.checked = true;
+    }
+  }
+ 
+  // ── Next ──
+  function nextQuestion() {
+    var selected = document.querySelector('input[name="q' + currentQ + '"]:checked');
+    if (!selected) {
+      document.getElementById('warn-q' + currentQ).classList.add('visible');
+      return;
+    }
+    answers['q' + currentQ] = selected.value;
+    currentQ++;
+    showQuestion(currentQ);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+ 
+  // ── Prev ──
+  function prevQuestion() {
+    // Save current if answered
+    var selected = document.querySelector('input[name="q' + currentQ + '"]:checked');
+    if (selected) answers['q' + currentQ] = selected.value;
+    currentQ--;
+    showQuestion(currentQ);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+ 
+  // ── Submit ──
+  function submitAssessment() {
+    var selected = document.querySelector('input[name="q' + currentQ + '"]:checked');
+    if (!selected) {
+      document.getElementById('warn-q' + currentQ).classList.add('visible');
+      return;
+    }
+    answers['q' + currentQ] = selected.value;
+    showResults();
+  }
+ 
+  // ── Calculate & display results ──
+  function showResults() {
+    // Score: count "yes" answers
+    var score = 0;
+    for (var i = 1; i <= totalQ; i++) {
+      if (answers['q' + i] === 'yes') score++;
+    }
+ 
+    var name    = document.getElementById('name').value.trim();
+    var company = document.getElementById('company').value.trim();
+    var displayName = name + (company ? ' — ' + company : '');
+ 
+    document.getElementById('result-name').textContent = displayName;
+ 
+    // Determine category
+    var icon, badge, badgeClass, category, desc, ctaIntro;
+ 
+    if (score >= 7) {
+      // High stress
+      icon       = '🚨';
+      badge      = 'High Stress Level';
+      badgeClass = 'badge-high';
+      category   = 'Highly Stressed Workplace';
+      desc       = 'Your responses indicate a workplace under significant stress. This level of stress can have serious consequences for your team\'s health, morale, and your organisation\'s performance. Immediate attention is strongly recommended.';
+      ctaIntro   = 'Don\'t wait — reach out to Jason today for a more in-depth assessment and a tailored intervention plan.';
+    } else if (score >= 4) {
+      // Medium stress
+      icon       = '⚠️';
+      badge      = 'Medium Stress Level';
+      badgeClass = 'badge-mid';
+      category   = 'Medium Stressed Workplace';
+      desc       = 'Your responses suggest that stress is present and building in your workplace. While not yet critical, these warning signs should not be ignored. A proactive approach now can prevent more serious issues down the line.';
+      ctaIntro   = 'Contact Jason Sandler to explore a targeted workshop to address the pending stress-related issues in your team.';
+    } else {
+      // Low stress
+      icon       = '✅';
+      badge      = 'Low Stress Level';
+      badgeClass = 'badge-low';
+      category   = 'Low Workplace Stress';
+      desc       = 'Your responses indicate that your workplace is currently managing stress well. This is great news! Maintaining these positive conditions is key to long-term productivity, retention, and staff wellbeing.';
+      ctaIntro   = 'Connect with Jason Sandler to explore how to sustain and further improve your healthy, low-stress workplace culture.';
+    }
+ 
+    document.getElementById('result-icon').textContent = icon;
+    document.getElementById('result-badge').textContent = badge;
+    document.getElementById('result-badge').className = 'result-badge ' + badgeClass;
+    document.getElementById('result-category').textContent = category;
+    document.getElementById('result-description').textContent = desc;
+    document.getElementById('result-cta-intro').textContent = ctaIntro;
+ 
+    // Score dots (10 dots, filled = yes answers)
+    var dotsEl = document.getElementById('score-dots');
+    dotsEl.innerHTML = '';
+    var dotClass = score >= 7 ? 'filled-high' : (score >= 4 ? 'filled-mid' : 'filled-low');
+    for (var d = 1; d <= totalQ; d++) {
+      var dot = document.createElement('div');
+      dot.className = 'score-dot' + (d <= score ? ' ' + dotClass : '');
+      dotsEl.appendChild(dot);
+    }
+ 
+    // Hide assessment, show results
+    document.getElementById('assessment-screen').style.display = 'none';
+    document.getElementById('results-screen').style.display    = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+ 
+  // ── Restart ──
+  function restartAssessment() {
+    // Reset all
+    currentQ = 1;
+    answers  = {};
+ 
+    // Clear radios
+    for (var i = 1; i <= totalQ; i++) {
+      var radios = document.querySelectorAll('input[name="q' + i + '"]');
+      radios.forEach(function(r) { r.checked = false; });
+    }
+ 
+    // Clear inputs
+    document.getElementById('name').value    = '';
+    document.getElementById('cell').value    = '';
+    document.getElementById('company').value = '';
+ 
+    // Reset views
+    document.getElementById('results-screen').style.display   = 'none';
+    document.getElementById('assessment-screen').style.display = 'none';
+    document.getElementById('intro-screen').style.display      = 'block';
+ 
+    showQuestion(1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+ 
+  // ── Auto-advance on selection (optional UX enhancement) ──
+  document.querySelectorAll('.yn-option input[type="radio"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+      var qName = this.name;
+      var qNum  = parseInt(qName.replace('q', ''));
+      document.getElementById('warn-' + qName).classList.remove('visible');
+ 
+      // Auto-advance after short delay
+      if (qNum < totalQ) {
+        setTimeout(function() {
+          answers['q' + qNum] = document.querySelector('input[name="q' + qNum + '"]:checked').value;
+          currentQ = qNum + 1;
+          showQuestion(currentQ);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 400);
+      }
+    });
+  });
+ 
+  // Clear validation on input
+  document.getElementById('name').addEventListener('input', function() {
+    this.classList.remove('error');
+    document.getElementById('name-error').classList.remove('visible');
+  });
+ 
+  document.getElementById('cell').addEventListener('input', function() {
+    this.classList.remove('error');
+    document.getElementById('cell-error').classList.remove('visible');
+  });
+</script>
+ 
+</body>
+</html>
